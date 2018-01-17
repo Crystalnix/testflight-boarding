@@ -26,7 +26,7 @@ class BoardingApp < Sinatra::Base
     unless service.get_tester(request_data['apple_id']).nil?
       status 400
       return {
-          :apple_id => 'Beta tester with that Apple ID already exists.'
+          :apple_id => ['Beta tester with that Apple ID already exists.']
       }.to_json
     end
 
