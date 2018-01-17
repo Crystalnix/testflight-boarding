@@ -8,7 +8,7 @@ class BoardingApp < Sinatra::Base
   post '/tester/' do
     content_type :json
     request_schema = Dry::Validation.Form do
-      required(:email).filled(:str?)
+      required(:apple_id).filled(:str?)
       required(:first_name).filled(:str?)
       required(:last_name).filled(:str?)
     end
@@ -23,13 +23,15 @@ class BoardingApp < Sinatra::Base
 
     service = BoardingService.new
 
-    unless service.get_tester(request_data['email']).nil?
+    unless service.get_tester(request_data['apple_id']).nil?
       status 400
-      return { :email => 'Tester with that email already exists.' }.to_json
+      return {
+          :apple_id => 'Beta tester with that Apple ID already exists.'
+      }.to_json
     end
 
     service.add_tester(
-        request_data['email'],
+        request_data['apple_id'],
         request_data['first_name'],
         request_data['last_name']
     )
