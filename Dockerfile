@@ -6,7 +6,12 @@ WORKDIR app
 EXPOSE 3000
 
 ADD Gemfile Gemfile
-RUN apk add --no-cache --virtual dev-deps gcc g++ build-base && \
-    bundle install && apk del dev-deps
+RUN apk add --no-cache --virtual dev-deps gcc g++ build-base \
+    linux-headers && \
+    bundle install
 
-CMD bundle exec passenger start
+RUN mkdir tmp && mkdir log
+
+ADD . /app/
+
+CMD unicorn -c unicorn.rb
