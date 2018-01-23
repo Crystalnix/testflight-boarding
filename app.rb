@@ -51,5 +51,6 @@ class BoardingApp < Sinatra::Base
     end
 
     status 201
+    {}.to_json
   end
 end
