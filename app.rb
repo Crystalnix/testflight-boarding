@@ -44,7 +44,10 @@ class BoardingApp < Sinatra::Base
           :tags => {:apple_id => request_data['apple_id']},
           :user => {:email => request_data['apple_id']},
           :fingerprint => [SecureRandom.uuid.to_s],
-          :extra => {:exception => exception.message}
+          :extra => {
+              :exception => exception.message,
+              :request_payload => request_data
+          }
       )
 
       return
