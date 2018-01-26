@@ -7,8 +7,7 @@ class BoardingService
   attr_accessor :tester_group_name
 
   def initialize
-    spaceship = Spaceship::Tunes.login(ENV['ITC_USER'], @password = ENV['ITC_PASSWORD'])
-    spaceship.select_team
+    Spaceship::Tunes.login(ENV['FASTLANE_USER'], @password = ENV['FASTLANE_PASSWORD']).select_team
     @app = Spaceship::Tunes::Application.find(ENV['ITC_APP_ID'])
 
     init_tester_group(ENV['ITC_APP_TESTER_GROUP'])

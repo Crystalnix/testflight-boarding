@@ -1,11 +1,17 @@
 require 'sinatra/base'
+require 'spaceship'
 require 'dry-validation'
 require 'json'
 require 'securerandom'
 
 require_relative './boarding_service'
 
+
 class BoardingApp < Sinatra::Base
+  configure do
+    set :service, BoardingService.new
+  end
+
   post '/tester/' do
     content_type :json
     request_schema = Dry::Validation.Form do
@@ -18,27 +24,23 @@ class BoardingApp < Sinatra::Base
     validated = request_schema.(request_data)
 
     unless validated.success?
-      status 400
-      return validated.messages.to_json
+      halt 400, validated.messages.to_json
     end
 
     begin
-      service = BoardingService.new
 
-      unless service.get_tester(request_data['apple_id']).nil?
-        status 400
-        return {
+      unless settings.service.get_tester(request_data['apple_id']).nil?
+        halt 400, {
             :apple_id => ['Beta tester with that Apple ID already exists.']
         }.to_json
       end
 
-      service.add_tester(
+      settings.service.add_tester(
           request_data['apple_id'],
           request_data['first_name'],
           request_data['last_name']
       )
     rescue Exception => exception
-      status 424
       Raven.capture_message(
           "Unable to register #{request_data['apple_id']} in TestFlight",
           :tags => {:apple_id => request_data['apple_id']},
@@ -46,11 +48,12 @@ class BoardingApp < Sinatra::Base
           :fingerprint => [SecureRandom.uuid.to_s],
           :extra => {
               :exception => exception.message,
-              :request_payload => request_data
+              :request_payload => request_data,
+              :stacktrace => exception.backtrace
           }
       )
 
-      return
+      halt 424
     end
 
     status 201

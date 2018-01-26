@@ -6,12 +6,11 @@ WORKDIR app
 EXPOSE 3000
 
 ADD Gemfile Gemfile
-RUN apk add --no-cache --virtual dev-deps gcc g++ build-base \
-    linux-headers && \
-    bundle install
+ADD Gemfile.lock Gemfile.lock
 
-RUN mkdir tmp && mkdir log
+RUN apk add --no-cache --virtual dev-deps gcc g++ build-base \
+    linux-headers && bundle install
 
 ADD . /app/
 
-CMD unicorn -c unicorn.rb
+CMD puma config.ru -w 2 -t 0:4 -p 3000
