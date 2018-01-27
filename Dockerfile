@@ -13,4 +13,6 @@ RUN apk add --no-cache --virtual dev-deps gcc g++ build-base \
 
 ADD . /app/
 
-CMD puma config.ru -w 2 -t 0:4 -p 3000
+RUN crontab crontab.txt
+
+CMD crond -b && puma config.ru -w 2 -t 0:4 -p 3000
