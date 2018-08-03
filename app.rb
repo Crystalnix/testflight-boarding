@@ -45,6 +45,7 @@ class BoardingApp < Sinatra::Base
           "Unable to register #{request_data['apple_id']} in TestFlight",
           :tags => {:apple_id => request_data['apple_id']},
           :user => {:email => request_data['apple_id']},
+          :level => 'warning',
           :fingerprint => [SecureRandom.uuid.to_s],
           :extra => {
               :exception => exception.message,
